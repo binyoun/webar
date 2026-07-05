@@ -137,7 +137,7 @@
           <div class="scan"><span class="c"></span><span class="sweep"></span>
             ${w.targetImage
               ? `<img src="${w.targetImage}" alt="Target photograph for ${w.title}" loading="lazy"
-                   onerror="this.remove();this.parentElement.insertAdjacentHTML('beforeend','<span class=placeholder>target image pending</span>')" />`
+                   onerror="const p=this.parentElement;this.remove();p.insertAdjacentHTML('beforeend','<span class=placeholder>target image pending</span>')" />`
               : `<span class="placeholder">target image pending</span>`}
           </div>
           <div class="body">
