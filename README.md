@@ -1,4 +1,4 @@
-# webar-studio
+# Elemental WebAR
 
 Photographs that open when you look at them.
 
@@ -46,7 +46,7 @@ Deliberately out of scope for now.
 
 ## House style
 
-Design tokens match binyoun.com / reroot: #0b0b0b ground, Space Grotesk,
+Design tokens match binyoun.com: #0b0b0b ground, Space Grotesk,
 JetBrains Mono, terracotta #c1440e. The scanner-frame corner brackets on
 gallery cards echo the specimen-HUD treatment on binyoun.com. No em-dashes
 anywhere in this repo.

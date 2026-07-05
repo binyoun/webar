@@ -1,4 +1,4 @@
-# WebAR Studio: Student Guide
+# Elemental WebAR: Student Guide
 
 **Creative Photography · RMIT Vietnam**
 

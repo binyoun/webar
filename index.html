@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WebAR Studio</title>
+  <title>Elemental WebAR</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -81,8 +81,8 @@
 </head>
 <body>
   <header>
-    <div class="mono eyebrow" id="ex-course">webar studio</div>
-    <h1 id="ex-title">WebAR Studio</h1>
+    <div class="mono eyebrow" id="ex-course">elemental webar</div>
+    <h1 id="ex-title">Elemental WebAR</h1>
     <p class="sub" id="ex-subtitle"></p>
     <div class="how">
       <b>how it works</b><br />
@@ -126,7 +126,7 @@
       if (ex.subtitle) document.getElementById("ex-subtitle").textContent = ex.subtitle;
       if (ex.course) document.getElementById("ex-course").textContent =
         `${ex.course}${ex.instructor ? " \u00b7 " + ex.instructor : ""}`;
-      document.title = ex.title || "WebAR Studio";
+      document.title = ex.title || "Elemental WebAR";
 
       const gallery = document.getElementById("gallery");
       config.works.forEach((w) => {
