@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>02 · GPS Fence</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_style.css" />
+</head>
+<body>
+<div class="mono eyebrow">experiment 02 · place</div>
+<h1>GPS: work that lives somewhere</h1>
+<div class="lineage">lineage: Gelora Mycelium Network (Bagua / GPS nodes, MMU Malaysia)</div>
+
+<p>A geofence is a circle on the earth. Inside it, the work opens; outside it,
+the visitor sees only distance. Walking becomes part of the piece, and the
+distance readout is itself an image of longing.</p>
+
+<div class="panel">
+  <label>site latitude</label><input id="lat" value="10.7769" />
+  <label>site longitude</label><input id="lng" value="106.7009" />
+  <label>radius (meters)</label><input id="radius" value="60" />
+  <p style="margin-top:1rem"><button id="start">start watching my distance</button></p>
+  <p class="big" id="readout">··· m</p>
+  <p class="mono" id="state" style="color:var(--dim)">the default coordinates are central Ho Chi Minh City · change them to your photo's site</p>
+</div>
+
+<script>
+// Haversine: great-circle distance between two lat/lng points, in meters.
+// This is the whole mathematics of a geofence.
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371000, rad = Math.PI / 180;
+  const dLat = (lat2 - lat1) * rad, dLng = (lng2 - lng1) * rad;
+  const a = Math.sin(dLat/2)**2 +
+            Math.cos(lat1*rad) * Math.cos(lat2*rad) * Math.sin(dLng/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+const readout = document.getElementById('readout');
+const state = document.getElementById('state');
+
+document.getElementById('start').addEventListener('click', () => {
+  if (!navigator.geolocation) { state.textContent = 'geolocation unavailable'; return; }
+  state.textContent = 'watching · walk around and observe the number';
+  navigator.geolocation.watchPosition((pos) => {
+    const lat = parseFloat(document.getElementById('lat').value);
+    const lng = parseFloat(document.getElementById('lng').value);
+    const r   = parseFloat(document.getElementById('radius').value);
+    const d = haversine(pos.coords.latitude, pos.coords.longitude, lat, lng);
+    readout.textContent = Math.round(d) + ' m';
+    const inside = d <= r;
+    readout.style.color = inside ? '#7ec98f' : 'var(--accent)';
+    state.textContent = inside
+      ? 'inside the fence · in the AR viewer, the work would open now'
+      : 'outside · accuracy is roughly ±' + Math.round(pos.coords.accuracy) + ' m here';
+  }, () => { state.textContent = 'location permission denied'; },
+  { enableHighAccuracy: true });
+});
+</script>
+
+<div class="exercises">
+  <div class="mono eyebrow">experiments to try</div>
+  <ol>
+    <li>Set the radius to 10 m and try to stand exactly on the point. GPS
+        accuracy in the city is often worse than 10 m. Where does the
+        technology's uncertainty become part of the concept?</li>
+    <li>Chain three fences into a walk: each unlocked work reveals the
+        coordinates of the next. A mycelium of images.</li>
+    <li>Put the fence around the place a photograph was taken, and exhibit
+        the print far away. The visitor must choose which half to visit.</li>
+  </ol>
+</div>
+</body>
+</html>

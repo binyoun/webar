@@ -1,0 +1,19 @@
+/* shared experiment page style : binyoun tokens */
+:root { --bg:#0b0b0b; --ink:#eaeaea; --dim:#8f8f8f; --line:rgba(234,234,234,.14); --accent:#c1440e; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--ink); font-family:'Space Grotesk',sans-serif; line-height:1.65; padding:2.5rem 1.5rem 5rem; max-width:720px; margin:0 auto; }
+.mono { font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; }
+.eyebrow { color:var(--accent); }
+h1 { font-size:1.7rem; font-weight:600; margin:.4rem 0 .2rem; }
+.lineage { color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:.72rem; margin-bottom:1.6rem; }
+p { margin:.7rem 0; }
+.panel { border:1px solid var(--line); padding:1.3rem; margin:1.5rem 0; }
+button, input, textarea { font-family:'JetBrains Mono',monospace; font-size:.8rem; background:none; color:var(--ink); border:1px solid var(--accent); padding:.55rem .9rem; }
+button { color:var(--accent); cursor:pointer; text-transform:uppercase; letter-spacing:.1em; }
+button:hover { background:var(--accent); color:var(--bg); }
+button:focus-visible, input:focus-visible, textarea:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+.big { font-size:2.2rem; font-family:'JetBrains Mono',monospace; color:var(--accent); }
+.exercises { border-left:2px solid var(--accent); padding-left:1.1rem; margin-top:2.5rem; }
+.exercises li { margin:.5rem 0 .5rem 1rem; }
+a { color:var(--accent); }
+label { display:block; font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--dim); margin:.8rem 0 .3rem; letter-spacing:.1em; text-transform:uppercase; }

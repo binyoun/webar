@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>01 · NFC Writer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_style.css" />
+</head>
+<body>
+<div class="mono eyebrow">experiment 01 · touch</div>
+<h1>NFC: the photograph you tap</h1>
+<div class="lineage">lineage: Sacred Tree (NTAG215 floor inlays · third authorship)</div>
+
+<p>An NFC tag stores nothing but a URL. When a phone touches it, the browser
+opens <code>ar.html?work=&lt;slug&gt;</code>. The intelligence is in the web
+page; the tag is only a door handle. This is why the work needs no app.</p>
+
+<p>Conceptually: in Sacred Tree, visitors tapped the inlays with their hands,
+not their phones, and the "failure" became the work. Design your tag placement
+knowing people will touch it wrong, and decide what that misunderstanding means.</p>
+
+<div class="panel">
+  <label for="slug">work slug (from config.json)</label>
+  <input id="slug" value="example-fallen-flower" style="width:100%" />
+  <label for="url">url that will be written</label>
+  <input id="url" readonly style="width:100%; color:var(--dim)" />
+  <p style="margin-top:1rem"><button id="write">write to nfc tag</button></p>
+  <p class="mono" id="status" style="color:var(--dim)">android chrome only · ios reads tags natively but cannot write from the browser</p>
+</div>
+
+<script>
+// Web NFC (NDEFReader) ships in Chrome on Android. One record, type url.
+const slugEl = document.getElementById('slug');
+const urlEl = document.getElementById('url');
+const status = document.getElementById('status');
+
+function refresh() {
+  // the AR viewer lives one directory up from /experiments/
+  urlEl.value = new URL('../ar.html?work=' + encodeURIComponent(slugEl.value.trim()),
+                        location.href).href;
+}
+slugEl.addEventListener('input', refresh); refresh();
+
+document.getElementById('write').addEventListener('click', async () => {
+  if (!('NDEFReader' in window)) {
+    status.textContent = 'web nfc not available here · use chrome on android';
+    return;
+  }
+  try {
+    status.textContent = 'hold a blank NTAG215 against the back of the phone…';
+    await new NDEFReader().write({ records: [{ recordType: 'url', data: urlEl.value }] });
+    status.textContent = 'written · tap the tag with any phone to test';
+  } catch (e) {
+    status.textContent = 'write failed: ' + e.message;
+  }
+});
+</script>
+
+<div class="exercises">
+  <div class="mono eyebrow">experiments to try</div>
+  <ol>
+    <li>Write the same work to two tags and hide them in different places.
+        Does location change the meaning of identical content?</li>
+    <li>Mount a tag <em>behind</em> the printed photograph so the print itself
+        is tapped. The photo becomes both marker and switch.</li>
+    <li>Watch three visitors who have never used NFC. Write down exactly what
+        they do with their hands before it works. That gap is material.</li>
+  </ol>
+</div>
+</body>
+</html>

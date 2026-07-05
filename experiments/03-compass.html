@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>03 · Compass</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_style.css" />
+</head>
+<body>
+<div class="mono eyebrow">experiment 03 · direction</div>
+<h1>Compass: the body as a dial</h1>
+<div class="lineage">lineage: geloracompass · obangsaek directions (east/wood, south/fire, center/earth, west/metal, north/water)</div>
+
+<p>Device orientation gives us the phone's heading. Asking a visitor to face a
+direction before a work opens makes their whole body part of the interface,
+and quietly imports a cosmology: in five phase theory, each direction has a
+color, an element, a season.</p>
+
+<div class="panel">
+  <label>target heading (0=N, 90=E, 180=S, 270=W)</label><input id="target" value="90" />
+  <label>tolerance (degrees)</label><input id="tol" value="15" />
+  <p style="margin-top:1rem"><button id="start">enable compass</button></p>
+  <p class="big" id="dial" style="display:inline-block; transition:transform .15s">△</p>
+  <p class="big" id="deg">···°</p>
+  <p class="mono" id="state" style="color:var(--dim)">the triangle points toward your target · turn until it settles upright</p>
+</div>
+
+<script>
+// Two APIs, one idea:
+//   iOS Safari  : event.webkitCompassHeading  (0 = north, already corrected)
+//   Android     : event.alpha with absolute=true, heading = 360 - alpha
+// iOS 13+ also requires an explicit permission request from a user gesture.
+const dial = document.getElementById('dial');
+const deg = document.getElementById('deg');
+const state = document.getElementById('state');
+
+function onOrient(e) {
+  let heading = null;
+  if (typeof e.webkitCompassHeading === 'number') heading = e.webkitCompassHeading;
+  else if (e.absolute && typeof e.alpha === 'number') heading = 360 - e.alpha;
+  if (heading == null) { state.textContent = 'no absolute heading on this device'; return; }
+
+  const target = parseFloat(document.getElementById('target').value);
+  const tol = parseFloat(document.getElementById('tol').value);
+  // signed shortest rotation from current heading to target, in [-180, 180]
+  const diff = ((target - heading + 540) % 360) - 180;
+
+  dial.style.transform = 'rotate(' + diff + 'deg)';
+  deg.textContent = Math.round(heading) + '°';
+  const locked = Math.abs(diff) <= tol;
+  deg.style.color = locked ? '#7ec98f' : 'var(--accent)';
+  state.textContent = locked
+    ? 'facing it · in the AR viewer, the work would open now'
+    : Math.round(Math.abs(diff)) + '° to go';
+}
+
+document.getElementById('start').addEventListener('click', () => {
+  const listen = () => {
+    window.addEventListener('deviceorientationabsolute', onOrient, true);
+    window.addEventListener('deviceorientation', onOrient, true);
+    state.textContent = 'compass live · turn slowly';
+  };
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission().then((s) => {
+      if (s === 'granted') listen(); else state.textContent = 'permission denied';
+    });
+  } else listen();
+});
+</script>
+
+<div class="exercises">
+  <div class="mono eyebrow">experiments to try</div>
+  <ol>
+    <li>Map the five obangsaek directions to five photographs. The visitor
+        turns in place and the gallery rearranges around their body.</li>
+    <li>Set tolerance to 3°. How does precision change the visitor's posture
+        and patience? At what number does ritual become frustration?</li>
+    <li>Combine with experiment 02: a work that opens only at one place,
+        facing one way. A photograph as a summoning condition.</li>
+  </ol>
+</div>
+</body>
+</html>

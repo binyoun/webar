@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>04 · Sonify</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_style.css" />
+<style>
+  #strip { display:flex; gap:2px; flex-wrap:wrap; margin-top:1rem; min-height:34px; }
+  #strip .hole { width:10px; background:var(--line); }
+  #strip .hole.on { background:var(--accent); }
+</style>
+</head>
+<body>
+<div class="mono eyebrow">experiment 04 · score</div>
+<h1>Sonify: text as a music box strip</h1>
+<div class="lineage">lineage: Vanishing Waters / Perforated Atlas (memory → perforation → sound and light)</div>
+
+<p>This is a deterministic translation: every character becomes a note by a
+fixed rule (its character code, modulo the scale length). No randomness, no
+AI. The same sentence always produces the same melody, the way the same
+perforated strip always plays the same tune. Determinism is the point: the
+memory owns its sound.</p>
+
+<div class="panel">
+  <label for="text">a memory (try Vietnamese or Korean · every script has a sound)</label>
+  <textarea id="text" rows="3" style="width:100%">the water under nguyen van cu bridge kept my grandmother's voice</textarea>
+  <p style="margin-top:1rem"><button id="play">play the strip</button></p>
+  <div id="strip" aria-hidden="true"></div>
+  <p class="mono" style="color:var(--dim)">each column is one character · height is pitch · spaces are rests</p>
+</div>
+
+<script>
+// A minor pentatonic-ish ladder. Eight rungs is enough to feel melodic
+// while staying impossible to make "wrong".
+const scale = [220, 261.63, 293.66, 329.63, 392, 440, 523.25, 587.33];
+let ctx = null;
+
+function render(text) {
+  const strip = document.getElementById('strip');
+  strip.innerHTML = '';
+  [...text].slice(0, 64).forEach((ch) => {
+    const code = ch.codePointAt(0);
+    const div = document.createElement('div');
+    div.className = 'hole';
+    // pitch decides the hole height: a visual perforation pattern
+    div.style.height = code <= 32 ? '6px' : (10 + (code % scale.length) * 4) + 'px';
+    if (code > 32) div.dataset.note = code % scale.length;
+    strip.appendChild(div);
+  });
+}
+
+function play(text) {
+  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  ctx.resume();
+  const now = ctx.currentTime + 0.05, step = 0.16;
+  const holes = document.querySelectorAll('#strip .hole');
+  [...text].slice(0, 64).forEach((ch, i) => {
+    const code = ch.codePointAt(0);
+    // light follows sound, exactly on the beat
+    setTimeout(() => {
+      holes.forEach((h) => h.classList.remove('on'));
+      if (holes[i]) holes[i].classList.add('on');
+    }, (0.05 + i * step) * 1000);
+    if (code <= 32) return; // a space is a rest
+    const f = scale[code % scale.length];
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = 'sine'; osc.frequency.value = f;
+    gain.gain.setValueAtTime(0.0001, now + i * step);
+    gain.gain.exponentialRampToValueAtTime(0.2, now + i * step + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + i * step + step * 0.9);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now + i * step); osc.stop(now + i * step + step);
+  });
+}
+
+const textEl = document.getElementById('text');
+textEl.addEventListener('input', () => render(textEl.value));
+document.getElementById('play').addEventListener('click', () => { render(textEl.value); play(textEl.value); });
+render(textEl.value);
+</script>
+
+<div class="exercises">
+  <div class="mono eyebrow">experiments to try</div>
+  <ol>
+    <li>Change <code>osc.type</code> to <code>'square'</code> or
+        <code>'triangle'</code>. How does timbre change what the memory
+        feels like?</li>
+    <li>Type the same sentence in Vietnamese with and without diacritics.
+        The tone marks change the character codes, so <em>dấu</em> literally
+        changes the melody. What does that say about romanization?</li>
+    <li>Replace the scale array with two notes only. When does a translation
+        become an erasure?</li>
+    <li>Attach your melody to your AR work: add an <code>audio</code> field
+        to your config entry with your sentence as <code>source</code>.</li>
+  </ol>
+</div>
+</body>
+</html>

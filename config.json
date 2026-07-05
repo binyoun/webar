@@ -1,0 +1,104 @@
+{
+  "exhibition": {
+    "title": "re:root WebAR Studio",
+    "subtitle": "photographs that open when you look at them",
+    "course": "Creative Photography, RMIT Vietnam",
+    "instructor": "Bin Youn"
+  },
+  "works": [
+    {
+      "slug": "example-fallen-flower",
+      "title": "Fallen Flower, Resurrected",
+      "artist": "Example Student",
+      "year": 2026,
+      "target": "assets/targets/example-fallen-flower.mind",
+      "targetImage": "assets/targets/example-fallen-flower.jpg",
+      "overlay": { "type": "video", "src": "assets/overlays/example-fallen-flower.mp4", "width": 1, "height": 1.4142 },
+      "caption": "Point your camera at the printed photograph. The still image is the door; the moving image is the room."
+    },
+    {
+      "slug": "example-image-overlay",
+      "title": "Before / After",
+      "artist": "Example Student",
+      "year": 2026,
+      "target": "assets/targets/example-image-overlay.mind",
+      "targetImage": "assets/targets/example-image-overlay.jpg",
+      "overlay": { "type": "image", "src": "assets/overlays/example-image-overlay-alt.jpg", "width": 1, "height": 0.6667 },
+      "caption": "A second photograph rests on top of the first."
+    },
+    {
+      "slug": "example-model",
+      "title": "Gelora Specimen",
+      "artist": "Bin Youn",
+      "year": 2026,
+      "target": "assets/targets/example-model.mind",
+      "targetImage": "assets/targets/example-model.jpg",
+      "overlay": { "type": "model", "src": "assets/overlays/gelora.glb", "scale": "0.4 0.4 0.4", "position": "0 0 0.1" },
+      "caption": "A 3D creature grows out of the photographic surface."
+    },
+    {
+      "slug": "example-lenses",
+      "title": "Six Ways of Seeing One Canal",
+      "artist": "Example Student",
+      "year": 2026,
+      "target": "assets/targets/example-lenses.mind",
+      "targetImage": "assets/targets/example-lenses.jpg",
+      "overlay": {
+        "type": "lenses",
+        "width": 1,
+        "height": 0.6667,
+        "lenses": [
+          { "label": "memory engine", "src": "assets/overlays/lens-memory.jpg", "text": "What the water remembers." },
+          { "label": "erasure engine", "src": "assets/overlays/lens-erasure.jpg", "text": "What the city removed." },
+          { "label": "future engine", "src": "assets/overlays/lens-future.jpg", "text": "What might return." }
+        ]
+      },
+      "caption": "Tap anywhere to switch the interpretive lens.",
+      "_lineage": "SELECT PERCEPTION ENGINE"
+    },
+    {
+      "slug": "example-sonified",
+      "title": "A Memory, Perforated",
+      "artist": "Example Student",
+      "year": 2026,
+      "target": "assets/targets/example-sonified.mind",
+      "targetImage": "assets/targets/example-sonified.jpg",
+      "overlay": { "type": "image", "src": "assets/overlays/example-sonified-alt.jpg", "width": 1, "height": 1.4142 },
+      "audio": { "type": "sonify", "source": "the water under nguyen van cu bridge kept my grandmother's voice" },
+      "caption": "The caption text is the score. The same words always sound the same.",
+      "_lineage": "Vanishing Waters / Perforated Atlas"
+    },
+    {
+      "slug": "example-gps",
+      "title": "Mycelium Node 07",
+      "artist": "Example Student",
+      "year": 2026,
+      "target": "assets/targets/example-gps.mind",
+      "targetImage": "assets/targets/example-gps.jpg",
+      "trigger": { "type": "gps", "lat": 10.7769, "lng": 106.7009, "radius": 60 },
+      "overlay": { "type": "video", "src": "assets/overlays/example-gps.mp4", "width": 1, "height": 0.6667 },
+      "caption": "This work only opens near the site where the photograph was made.",
+      "_lineage": "Gelora Mycelium Network"
+    },
+    {
+      "slug": "example-compass",
+      "title": "Facing East, Where Wood Rises",
+      "artist": "Example Student",
+      "year": 2026,
+      "target": "assets/targets/example-compass.mind",
+      "targetImage": "assets/targets/example-compass.jpg",
+      "trigger": { "type": "compass", "heading": 90, "tolerance": 15 },
+      "overlay": { "type": "image", "src": "assets/overlays/example-compass-alt.jpg", "width": 1, "height": 1 },
+      "caption": "Turn your body east before the work will open.",
+      "_lineage": "geloracompass"
+    }
+  ],
+  "_schema_notes": {
+    "overlay.type": "video | image | model | lenses",
+    "overlay.width/height": "target-image units: width 1 = printed photo width; height = imageHeight/imageWidth",
+    "overlay.lenses": "array of {label, src, text?}; visitor taps to cycle interpretive layers",
+    "trigger": "optional gate before AR starts. gps: {lat,lng,radius m}. compass: {heading deg, tolerance deg}. every gate has a 'studio mode' bypass for classroom testing",
+    "audio.sonify": "deterministic text-to-melody on target found. source: 'caption' or any string. requires one tap to arm (mobile audio rule)",
+    "nfc": "no config needed: write ar.html?work=<slug> URL to an NTAG215 with experiments/01-nfc-writer.html"
+  }
+}

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebAR Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0b0b0b;
+      --panel: #121212;
+      --ink: #eaeaea;
+      --dim: #8f8f8f;
+      --line: rgba(234,234,234,.14);
+      --accent: #c1440e;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--ink); font-family: 'Space Grotesk', sans-serif; line-height: 1.6; }
+    .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: .14em; text-transform: uppercase; }
+
+    header { padding: 4.5rem 1.5rem 3rem; max-width: 1080px; margin: 0 auto; }
+    header .eyebrow { font-size: .72rem; color: var(--accent); }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 600; margin: .5rem 0 .3rem; }
+    header .sub { color: var(--dim); max-width: 52ch; }
+    header .how {
+      margin-top: 2rem; padding: 1rem 1.2rem; border: 1px solid var(--line);
+      font-family: 'JetBrains Mono', monospace; font-size: .74rem; color: var(--dim);
+      line-height: 2;
+    }
+    header .how b { color: var(--ink); font-weight: 500; }
+
+    main { max-width: 1080px; margin: 0 auto; padding: 0 1.5rem 5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.4rem; }
+
+    .card { background: var(--panel); border: 1px solid var(--line); display: flex; flex-direction: column; }
+
+    /* scanner frame: the signature element. corner brackets + sweep line over each target */
+    .scan { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #000; }
+    .scan img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .92; }
+    .scan .placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--dim); font-family: 'JetBrains Mono', monospace; font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; }
+    .scan::before, .scan::after,
+    .scan .c::before, .scan .c::after {
+      content: ""; position: absolute; width: 18px; height: 18px; border: 2px solid var(--accent); z-index: 2;
+    }
+    .scan::before { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
+    .scan::after  { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
+    .scan .c::before { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
+    .scan .c::after  { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
+    .scan .sweep {
+      position: absolute; left: 0; right: 0; top: -2px; height: 2px; z-index: 1;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0; transition: opacity .2s;
+    }
+    .card:hover .sweep { opacity: .9; animation: sweep 2.2s linear infinite; }
+    @keyframes sweep { from { top: 0; } to { top: 100%; } }
+    @media (prefers-reduced-motion: reduce) { .card:hover .sweep { animation: none; opacity: 0; } }
+
+    .card .body { padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+    .card h2 { font-size: 1.05rem; font-weight: 600; }
+    .card .meta { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--dim); letter-spacing: .1em; }
+    .card .actions { margin-top: auto; padding-top: .9rem; display: flex; gap: .6rem; }
+    .card a.open, .card button.qr {
+      font-family: 'JetBrains Mono', monospace; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
+      padding: .5rem .8rem; border: 1px solid var(--accent); color: var(--accent);
+      background: none; text-decoration: none; cursor: pointer;
+    }
+    .card a.open:hover { background: var(--accent); color: var(--bg); }
+    .card a.open:focus-visible, .card button.qr:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+    .qrbox { display: none; padding: .9rem 1.1rem 1.2rem; background: #fff; margin: 0 1.1rem 1.1rem; }
+    .qrbox.show { display: flex; justify-content: center; }
+
+    header .how a { color: var(--accent); text-decoration: none; }
+    .badges { display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.2rem; }
+    .badge { font-family:'JetBrains Mono',monospace; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; border:1px solid var(--line); color:var(--dim); padding:.15rem .4rem; }
+    .badge.mod { border-color: var(--accent); color: var(--accent); }
+    footer { border-top: 1px solid var(--line); padding: 2rem 1.5rem 3rem; max-width: 1080px; margin: 0 auto; color: var(--dim); font-family: 'JetBrains Mono', monospace; font-size: .7rem; letter-spacing: .1em; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="mono eyebrow" id="ex-course">webar studio</div>
+    <h1 id="ex-title">WebAR Studio</h1>
+    <p class="sub" id="ex-subtitle"></p>
+    <div class="how">
+      <b>how it works</b><br />
+      01 &nbsp;print your photograph &middot; the photo is the AR marker<br />
+      02 &nbsp;place the QR label beside the print<br />
+      03 &nbsp;visitor scans QR &rarr; points camera at the photo &rarr; the work opens<br />
+      no app &middot; no account &middot; just the open web
+    </div>
+
+    <div class="how" style="margin-top:1rem">
+      <b>experiments</b> &middot; one technique per page, from the studio's own works<br />
+      <span class="exlinks">
+      <a href="experiments/01-nfc-writer.html">01 nfc</a> &middot;
+      <a href="experiments/02-gps-fence.html">02 gps</a> &middot;
+      <a href="experiments/03-compass.html">03 compass</a> &middot;
+      <a href="experiments/04-sonify.html">04 sonify</a> &middot;
+      <a href="experiments/05-lenses.html">05 lenses</a> &middot;
+      <a href="experiments/06-lookup.html">06 lookup</a>
+      </span>
+    </div>
+  </header>
+
+  <main id="gallery"></main>
+
+  <footer>
+    built on the open web &middot; a-frame + mindar &middot; add your work in config.json
+  </footer>
+
+  <script>
+    function badges(w) {
+      const b = [`<span class="badge">${w.overlay.type}</span>`];
+      if (w.trigger) b.push(`<span class="badge mod">${w.trigger.type} gate</span>`);
+      if (w.audio) b.push(`<span class="badge mod">sonified</span>`);
+      return b.join("");
+    }
+
+    async function load() {
+      const config = await (await fetch("config.json")).json();
+      const ex = config.exhibition || {};
+      if (ex.title) document.getElementById("ex-title").textContent = ex.title;
+      if (ex.subtitle) document.getElementById("ex-subtitle").textContent = ex.subtitle;
+      if (ex.course) document.getElementById("ex-course").textContent =
+        `${ex.course}${ex.instructor ? " \u00b7 " + ex.instructor : ""}`;
+      document.title = ex.title || "WebAR Studio";
+
+      const gallery = document.getElementById("gallery");
+      config.works.forEach((w) => {
+        const arUrl = new URL(`ar.html?work=${encodeURIComponent(w.slug)}`, location.href).href;
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="scan"><span class="c"></span><span class="sweep"></span>
+            ${w.targetImage
+              ? `<img src="${w.targetImage}" alt="Target photograph for ${w.title}" loading="lazy"
+                   onerror="this.remove();this.parentElement.insertAdjacentHTML('beforeend','<span class=placeholder>target image pending</span>')" />`
+              : `<span class="placeholder">target image pending</span>`}
+          </div>
+          <div class="body">
+            <h2>${w.title}</h2>
+            <div class="meta">${w.artist} \u00b7 ${w.year}</div>
+            <div class="badges">${badges(w)}</div>
+            <div class="actions">
+              <a class="open" href="ar.html?work=${encodeURIComponent(w.slug)}">open in ar</a>
+              <button class="qr" type="button">qr label</button>
+            </div>
+          </div>
+          <div class="qrbox"></div>`;
+        const qrbox = card.querySelector(".qrbox");
+        card.querySelector("button.qr").addEventListener("click", () => {
+          if (!qrbox.dataset.done) {
+            new QRCode(qrbox, { text: arUrl, width: 140, height: 140 });
+            qrbox.dataset.done = "1";
+          }
+          qrbox.classList.toggle("show");
+        });
+        gallery.appendChild(card);
+      });
+    }
+    load();
+  </script>
+</body>
+</html>

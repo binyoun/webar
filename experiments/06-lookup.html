@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>06 · Lookup</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_style.css" />
+<style>
+  #result { border:1px solid var(--line); padding:1.5rem; margin-top:1rem; display:none; }
+  #swatch { width:100%; height:10px; margin-bottom:1rem; }
+</style>
+</head>
+<body>
+<div class="mono eyebrow">experiment 06 · assignment by cosmos</div>
+<h1>Lookup: a date becomes a color</h1>
+<div class="lineage">lineage: mansion-finder (28 lunar mansions locator, Sacred Tree)</div>
+
+<p>A lookup is the oldest interface in East Asian cosmology: your birthdate,
+passed through a fixed rule, lands you somewhere in a system that existed
+before you. Here a simplified rule maps any date to one of the five phases
+(obangsaek), and each phase can point to a different work in your config.
+The visitor is not choosing; they are being <em>found</em>. That reversal is
+the design material.</p>
+
+<div class="panel">
+  <label for="date">birthdate</label>
+  <input type="date" id="date" value="2000-01-01" />
+  <p style="margin-top:1rem"><button id="find">find my phase</button></p>
+  <div id="result">
+    <div id="swatch"></div>
+    <p class="big" id="phase"></p>
+    <p id="desc" style="color:var(--dim)"></p>
+    <p class="mono"><a id="worklink" href="#">open the work assigned to you →</a></p>
+  </div>
+</div>
+
+<script>
+// Five phases, five directions, five colors, five works.
+// The rule below (day-of-year mod 5) is deliberately simple so students can
+// see the whole mechanism. The real 28-mansion calculation lives in
+// mansion-finder; the pedagogy here is the STRUCTURE of a lookup:
+//   personal datum -> fixed rule -> position in a cosmology -> assigned work.
+const phases = [
+  { name: 'Wood · East · Blue-green', hex: '#2e6e4e',
+    desc: 'Rising, beginning, spring. The phase of first attempts.',
+    slug: 'example-compass' },
+  { name: 'Fire · South · Red', hex: '#b03030',
+    desc: 'Flourishing, visibility, summer. The phase of full expression.',
+    slug: 'example-fallen-flower' },
+  { name: 'Earth · Center · Yellow', hex: '#c9a23a',
+    desc: 'Holding, mediating, the turn of seasons. The phase that carries the others.',
+    slug: 'example-lenses' },
+  { name: 'Metal · West · White', hex: '#d8d8d8',
+    desc: 'Contracting, refining, autumn. The phase of editing.',
+    slug: 'example-image-overlay' },
+  { name: 'Water · North · Black', hex: '#20242c',
+    desc: 'Storing, remembering, winter. The phase of what waits underneath.',
+    slug: 'example-sonified' }
+];
+
+function dayOfYear(d) {
+  return Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
+}
+
+document.getElementById('find').addEventListener('click', () => {
+  const d = new Date(document.getElementById('date').value);
+  if (isNaN(d)) return;
+  const p = phases[dayOfYear(d) % 5];
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('swatch').style.background = p.hex;
+  document.getElementById('phase').textContent = p.name;
+  document.getElementById('desc').textContent = p.desc;
+  document.getElementById('worklink').href =
+    '../ar.html?work=' + encodeURIComponent(p.slug);
+});
+</script>
+
+<div class="exercises">
+  <div class="mono eyebrow">experiments to try</div>
+  <ol>
+    <li>Replace day-of-year mod 5 with a rule of your own invention: the vowels
+        in a name, the last digit of a phone number. What data feels intimate
+        enough to deserve a cosmology?</li>
+    <li>Two people with birthdays one day apart get different phases. Is the
+        boundary arbitrary or is arbitrariness what makes it work? Compare
+        with any horoscope column.</li>
+    <li>Curate the mapping: assign each classmate's work to a phase and defend
+        the assignments as a curatorial statement.</li>
+  </ol>
+</div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>05 · Lenses</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_style.css" />
+<style>
+  #stage { border:1px solid var(--line); aspect-ratio:3/2; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+  #stage .veil { position:absolute; inset:0; mix-blend-mode:multiply; transition:background .4s; }
+  #reading { min-height:3.2em; }
+  .lensbtns { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1rem; }
+  .lensbtns button.active { background:var(--accent); color:var(--bg); }
+</style>
+</head>
+<body>
+<div class="mono eyebrow">experiment 05 · interpretation</div>
+<h1>Lenses: one image, many machines</h1>
+<div class="lineage">lineage: SELECT PERCEPTION ENGINE (six fictional AI engines reading one Hwajeopdo painting)</div>
+
+<p>The image never changes. Only the reading changes. Each "engine" is a
+fiction: a named point of view with a color and a voice. The lesson hiding
+inside the joke is real: every actual machine-vision system is also a point
+of view wearing the costume of objectivity.</p>
+
+<div class="panel">
+  <div id="stage">
+    <span class="mono" style="color:var(--dim)">your photograph goes here (edit the src below)</span>
+    <img id="photo" src="" alt="" style="max-width:100%; max-height:100%; display:none"
+         onload="this.style.display='block'; this.previousElementSibling.style.display='none'" />
+    <div class="veil" id="veil"></div>
+  </div>
+  <div class="lensbtns" id="btns"></div>
+  <p id="reading" style="margin-top:1rem"></p>
+</div>
+
+<script>
+// A lens = a name, a tint, a way of speaking about the same picture.
+// Students: rewrite these three, then add a fourth. The engine names and
+// their prose ARE the artwork; the code is only a carousel.
+const lenses = [
+  { label: 'memory engine', tint: 'rgba(193,68,14,.25)',
+    text: 'ENGINE 01 reports: sediment of a Tuesday. Confidence irrelevant. The subject has been photographed before, by someone who loved it.' },
+  { label: 'surveillance engine', tint: 'rgba(60,120,200,.3)',
+    text: 'ENGINE 02 reports: 1 person(s), 0 threat(s), 14 objects inventoried. Nothing else was seen because nothing else was asked.' },
+  { label: 'botanical engine', tint: 'rgba(90,160,90,.28)',
+    text: 'ENGINE 03 reports: chlorophyll where you saw composition. Growth stage: falling. Recommends no intervention.' }
+];
+
+// point this at any image in assets/, e.g. '../assets/targets/example-lenses.jpg'
+document.getElementById('photo').src = '../assets/targets/example-lenses.jpg';
+
+const btns = document.getElementById('btns');
+lenses.forEach((l, i) => {
+  const b = document.createElement('button');
+  b.textContent = l.label;
+  b.onclick = () => apply(i);
+  btns.appendChild(b);
+});
+
+function apply(i) {
+  document.getElementById('veil').style.background = lenses[i].tint;
+  document.getElementById('reading').textContent = lenses[i].text;
+  [...btns.children].forEach((b, j) => b.classList.toggle('active', j === i));
+}
+apply(0);
+</script>
+
+<div class="exercises">
+  <div class="mono eyebrow">experiments to try</div>
+  <ol>
+    <li>Write a fourth engine that reads the image the way your grandmother
+        would. Is she less objective than the surveillance engine, or
+        differently objective?</li>
+    <li>Give two engines contradictory readings of the same detail. Truth in
+        parallax.</li>
+    <li>Move your lenses into the AR viewer: use overlay type
+        <code>lenses</code> in config.json, with one edited image per lens.
+        Now the interpretations float on the physical print, and visitors
+        tap through machines.</li>
+  </ol>
+</div>
+</body>
+</html>
