@@ -1,4 +1,4 @@
-# Elemental WebAR
+# <img src="favicon.png" width="28" alt=""> Elemental WebAR
 
 Photographs that open when you look at them.
 
