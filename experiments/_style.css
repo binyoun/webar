@@ -1,10 +1,10 @@
 /* shared experiment page style : binyoun tokens */
-:root { --bg:#0b0b0b; --ink:#eaeaea; --dim:#8f8f8f; --line:rgba(234,234,234,.14); --accent:#c1440e; }
+:root { --bg:#111114; --ink:#eaeaea; --dim:#8f8f8f; --line:rgba(234,234,234,.14); --accent:#FF2D9B; }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--ink); font-family:'Space Grotesk',sans-serif; line-height:1.65; padding:2.5rem 1.5rem 5rem; max-width:720px; margin:0 auto; }
+body { background:var(--bg); color:var(--ink); font-family:'DM Sans',sans-serif; line-height:1.65; padding:2.5rem 1.5rem 5rem; max-width:720px; margin:0 auto; }
 .mono { font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; }
 .eyebrow { color:var(--accent); }
-h1 { font-size:1.7rem; font-weight:600; margin:.4rem 0 .2rem; }
+h1 { font-family:'Manrope',sans-serif; font-size:2.2rem; font-weight:800; letter-spacing:-.02em; margin:.4rem 0 .2rem; }
 .lineage { color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:.72rem; margin-bottom:1.6rem; }
 p { margin:.7rem 0; }
 .panel { border:1px solid var(--line); padding:1.3rem; margin:1.5rem 0; }

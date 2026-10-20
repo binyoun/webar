@@ -4,118 +4,264 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Elemental WebAR</title>
+  <meta name="description" content="Photographs that open when you look at them: a free WebAR kit for printed photographs. No app, no account, just the open web." />
   <link rel="icon" type="image/png" href="/webar/favicon.png"/>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     :root {
-      --bg: #0b0b0b;
-      --panel: #121212;
-      --ink: #eaeaea;
-      --dim: #8f8f8f;
-      --line: rgba(234,234,234,.14);
-      --accent: #c1440e;
+      --void: #060608;
+      --bg: #111114;
+      --panel: #18181D;
+      --panel-2: #202027;
+      --ink: #E8E8EC;
+      --dim: #A8A8AC;
+      --faint: #686866;
+      --line: rgba(232,232,236,.12);
+      --accent: #FF2D9B;
+      --cyan: #4FFFDF;
+      --sand: #F4F0E8;
+      --display: 'Manrope', system-ui, sans-serif;
+      --body: 'DM Sans', system-ui, sans-serif;
+      --ease: cubic-bezier(.22,1,.36,1);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: var(--bg); color: var(--ink); font-family: 'Space Grotesk', sans-serif; line-height: 1.6; }
-    .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: .14em; text-transform: uppercase; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
+    .label { font-size: .75rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
 
-    header { padding: 4.5rem 1.5rem 3rem; max-width: 1080px; margin: 0 auto; }
-    header .eyebrow { font-size: .72rem; color: var(--accent); }
-    h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 600; margin: .5rem 0 .3rem; }
-    header .sub { color: var(--dim); max-width: 52ch; }
-    header .how {
-      margin-top: 2rem; padding: 1rem 1.2rem; border: 1px solid var(--line);
-      font-family: 'JetBrains Mono', monospace; font-size: .74rem; color: var(--dim);
-      line-height: 2;
+    /* hero */
+    .hero {
+      position: relative; overflow: hidden;
+      background: radial-gradient(circle at 75% 45%, rgba(255,45,155,.22), transparent 45%), var(--void);
     }
-    header .how b { color: var(--ink); font-weight: 500; }
-
-    main { max-width: 1080px; margin: 0 auto; padding: 0 1.5rem 5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.4rem; }
-
-    .card { background: var(--panel); border: 1px solid var(--line); display: flex; flex-direction: column; }
-
-    /* scanner frame: the signature element. corner brackets + sweep line over each target */
-    .scan { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #000; }
-    .scan img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .92; }
-    .scan .placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--dim); font-family: 'JetBrains Mono', monospace; font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; }
-    .scan::before, .scan::after,
-    .scan .c::before, .scan .c::after {
-      content: ""; position: absolute; width: 18px; height: 18px; border: 2px solid var(--accent); z-index: 2;
+    .hero .wrap {
+      display: grid; grid-template-columns: minmax(0,1.2fr) minmax(0,1fr); align-items: center; gap: 32px;
+      min-height: min(92vh, 860px); padding-top: 48px; padding-bottom: 64px;
     }
-    .scan::before { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
-    .scan::after  { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
-    .scan .c::before { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
-    .scan .c::after  { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
-    .scan .sweep {
-      position: absolute; left: 0; right: 0; top: -2px; height: 2px; z-index: 1;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0; transition: opacity .2s;
+    .hero .label { color: var(--accent); }
+    h1 {
+      font-family: var(--display); font-weight: 800; letter-spacing: -.045em; line-height: .95;
+      font-size: clamp(3.2rem, 8.5vw, 7.4rem); margin: 18px 0 22px;
     }
-    .card:hover .sweep { opacity: .9; animation: sweep 2.2s linear infinite; }
+    h1 .glow { color: var(--accent); text-shadow: 0 0 36px rgba(255,45,155,.55); }
+    .hero .sub { font-size: clamp(1.15rem, 2vw, 1.5rem); color: var(--dim); max-width: 30ch; }
+    .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; font: 700 .95rem var(--body);
+      padding: 14px 24px; border-radius: 999px; text-decoration: none; transition: transform .25s var(--ease), background .25s;
+    }
+    .btn.primary { background: var(--accent); color: var(--void); box-shadow: 0 0 30px rgba(255,45,155,.35); }
+    .btn.ghost { border: 1px solid rgba(232,232,236,.28); color: var(--ink); }
+    .btn:hover { transform: translateY(-2px); }
+    .btn.ghost:hover { background: rgba(232,232,236,.08); }
+
+    /* hero art: a phone looking at a print, rings rising out of it */
+    .stage { position: relative; aspect-ratio: 1; width: 100%; max-width: 520px; justify-self: end; }
+    .stage svg.rings { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .print {
+      position: absolute; left: 14%; top: 20%; width: 58%; aspect-ratio: 4/5; border-radius: 6px; transform: rotate(-8deg);
+      background:
+        radial-gradient(circle at 35% 30%, #FFB3D9 0 8%, transparent 9%),
+        radial-gradient(circle at 60% 62%, rgba(79,255,223,.8), transparent 38%),
+        radial-gradient(circle at 30% 70%, rgba(255,45,155,.9), transparent 42%),
+        linear-gradient(160deg, #2A1530, #0E2A2A);
+      border: 10px solid var(--sand); box-shadow: 0 30px 60px rgba(0,0,0,.5);
+    }
+    .phone {
+      position: absolute; right: 6%; bottom: 8%; width: 44%; aspect-ratio: 9/18.5; border-radius: 34px;
+      background: rgba(17,17,20,.55); backdrop-filter: blur(6px); border: 2px solid rgba(232,232,236,.5);
+      box-shadow: 0 0 0 6px rgba(17,17,20,.8), 0 30px 80px rgba(0,0,0,.6); transform: rotate(6deg); overflow: hidden;
+    }
+    .phone::before { content: ""; position: absolute; top: 10px; left: 50%; width: 30%; height: 14px; border-radius: 99px; background: #000; transform: translateX(-50%); }
+    .phone .view { position: absolute; inset: 16% 12% 22%; }
+    .corner { position: absolute; width: 22px; height: 22px; border: 3px solid var(--accent); }
+    .corner.tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+    .corner.tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+    .corner.bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+    .corner.br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+    .phone .beam { position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); box-shadow: 0 0 14px var(--accent); animation: sweep 2.6s ease-in-out infinite alternate; }
+    .phone .found { position: absolute; bottom: 9%; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--void); background: var(--cyan); padding: 4px 10px; border-radius: 99px; }
     @keyframes sweep { from { top: 0; } to { top: 100%; } }
-    @media (prefers-reduced-motion: reduce) { .card:hover .sweep { animation: none; opacity: 0; } }
+    .spin { transform-origin: 260px 260px; animation: spin 80s linear infinite; }
+    .spin-rev { transform-origin: 260px 260px; animation: spin 120s linear infinite reverse; }
+    .breathe { transform-origin: 260px 260px; animation: breathe 5s ease-in-out infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes breathe { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
 
-    .card .body { padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
-    .card h2 { font-size: 1.05rem; font-weight: 600; }
-    .card .meta { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--dim); letter-spacing: .1em; }
-    .card .actions { margin-top: auto; padding-top: .9rem; display: flex; gap: .6rem; }
-    .card a.open, .card button.qr {
-      font-family: 'JetBrains Mono', monospace; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
-      padding: .5rem .8rem; border: 1px solid var(--accent); color: var(--accent);
-      background: none; text-decoration: none; cursor: pointer;
-    }
-    .card a.open:hover { background: var(--accent); color: var(--bg); }
-    .card a.open:focus-visible, .card button.qr:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-    .qrbox { display: none; padding: .9rem 1.1rem 1.2rem; background: #fff; margin: 0 1.1rem 1.1rem; }
+    /* sections */
+    section.block { padding: clamp(64px, 9vw, 120px) 0 0; }
+    .block-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 32px; }
+    .block-head .label { color: var(--accent); display: block; margin-bottom: 10px; }
+    h2 { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 4.5vw, 3.4rem); letter-spacing: -.03em; line-height: 1.02; }
+    .block-head p { color: var(--dim); max-width: 40ch; }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .step { position: relative; padding: 32px 28px 30px; background: var(--panel); border: 1px solid var(--line); border-radius: 24px; overflow: hidden; }
+    .step::after { content: ""; position: absolute; right: -70px; bottom: -80px; width: 150px; height: 150px; border-radius: 50%; border: 2px dashed rgba(255,45,155,.22); }
+    .step svg { width: 46px; height: 46px; stroke: var(--accent); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .step .n { font-family: var(--display); font-weight: 800; font-size: 3.4rem; line-height: 1; color: var(--ink); opacity: .14; position: absolute; right: 26px; top: 24px; }
+    .step h3 { font-family: var(--display); font-weight: 800; font-size: 1.4rem; margin: 22px 0 6px; }
+    .step p { color: var(--dim); max-width: 30ch; }
+    .note-line { margin-top: 18px; color: var(--cyan); font-weight: 600; font-size: .95rem; }
+
+    /* gallery */
+    main { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; transition: transform .35s var(--ease), border-color .35s; }
+    .card:hover { transform: translateY(-4px); border-color: rgba(255,45,155,.5); }
+    .scan { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: radial-gradient(circle at 50% 50%, rgba(255,45,155,.16), transparent 60%), var(--void); }
+    .scan img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .scan .placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 14px; align-items: center; justify-content: center; color: var(--faint); font-size: .7rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .scan .placeholder::before { content: ""; width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--accent); box-shadow: 0 0 24px rgba(255,45,155,.5), inset 0 0 18px rgba(255,45,155,.3); outline: 1px dashed rgba(79,255,223,.5); outline-offset: 12px; }
+    .scan::before, .scan::after, .scan .c::before, .scan .c::after { content: ""; position: absolute; width: 20px; height: 20px; border: 3px solid var(--accent); z-index: 2; }
+    .scan::before { top: 12px; left: 12px; border-right: 0; border-bottom: 0; border-top-left-radius: 6px; }
+    .scan::after  { top: 12px; right: 12px; border-left: 0; border-bottom: 0; border-top-right-radius: 6px; }
+    .scan .c::before { bottom: 12px; left: 12px; border-right: 0; border-top: 0; border-bottom-left-radius: 6px; }
+    .scan .c::after  { bottom: 12px; right: 12px; border-left: 0; border-top: 0; border-bottom-right-radius: 6px; }
+    .scan .sweep { position: absolute; left: 0; right: 0; top: -2px; height: 2px; z-index: 1; background: linear-gradient(90deg, transparent, var(--accent), transparent); box-shadow: 0 0 12px var(--accent); opacity: 0; transition: opacity .2s; }
+    .card:hover .sweep { opacity: 1; animation: sweep 2.2s linear infinite; }
+
+    .card .body { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .card h2 { font-size: 1.3rem; letter-spacing: -.01em; line-height: 1.2; }
+    .card .meta { font-size: .85rem; color: var(--dim); }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .badge { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-radius: 99px; background: var(--panel-2); color: var(--dim); padding: 4px 10px; }
+    .badge.mod { background: rgba(79,255,223,.14); color: var(--cyan); }
+    .card .actions { margin-top: auto; padding-top: 16px; display: flex; gap: 10px; }
+    .card a.open, .card button.qr { font: 700 .82rem var(--body); padding: 10px 18px; border-radius: 99px; cursor: pointer; text-decoration: none; }
+    .card a.open { background: var(--accent); color: var(--void); border: 0; }
+    .card button.qr { background: none; border: 1px solid rgba(232,232,236,.28); color: var(--ink); }
+    .card a.open:hover { box-shadow: 0 0 24px rgba(255,45,155,.5); }
+    .card button.qr:hover { background: rgba(232,232,236,.08); }
+    .card a.open:focus-visible, .card button.qr:focus-visible, .btn:focus-visible, .exp:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    .qrbox { display: none; padding: 16px; background: #fff; margin: 0 24px 24px; border-radius: 14px; }
     .qrbox.show { display: flex; justify-content: center; }
 
-    header .how a { color: var(--accent); text-decoration: none; }
-    .badges { display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.2rem; }
-    .badge { font-family:'JetBrains Mono',monospace; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; border:1px solid var(--line); color:var(--dim); padding:.15rem .4rem; }
-    .badge.mod { border-color: var(--accent); color: var(--accent); }
-    footer { border-top: 1px solid var(--line); padding: 2rem 1.5rem 3rem; max-width: 1080px; margin: 0 auto; color: var(--dim); font-family: 'JetBrains Mono', monospace; font-size: .7rem; letter-spacing: .1em; }
+    /* experiments */
+    .exp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .exp { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 24px 26px; min-height: 170px; border-radius: 20px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: background .3s, transform .3s var(--ease); }
+    .exp:hover { background: var(--accent); color: var(--void); transform: translateY(-3px); }
+    .exp .num { font-family: var(--display); font-weight: 800; font-size: .9rem; color: var(--accent); }
+    .exp:hover .num, .exp:hover .from { color: var(--void); }
+    .exp h3 { font-family: var(--display); font-weight: 800; font-size: 1.35rem; line-height: 1.15; }
+    .exp p { color: var(--dim); font-size: .92rem; }
+    .exp:hover p { color: rgba(6,6,8,.75); }
+    .exp .from { margin-top: auto; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+
+    /* atlas band */
+    .band { margin-top: clamp(64px, 9vw, 120px); background: var(--accent); color: var(--void); }
+    .band .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding-top: 44px; padding-bottom: 44px; }
+    .band h2 { font-size: clamp(1.6rem, 3.4vw, 2.6rem); }
+    .band p { font-weight: 500; max-width: 46ch; margin-top: 6px; }
+    .band .btn { background: var(--void); color: var(--ink); }
+
+    footer { background: var(--void); color: var(--dim); font-size: .9rem; }
+    footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 36px; padding-bottom: 44px; }
+    footer a { color: var(--ink); }
+
+    @media (max-width: 860px) {
+      .hero .wrap { grid-template-columns: 1fr; min-height: 0; padding-top: 56px; }
+      .stage { justify-self: center; max-width: 380px; order: -1; margin-bottom: -20px; }
+      .steps, .exp-grid { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .spin, .spin-rev, .breathe, .phone .beam, .card:hover .sweep { animation: none; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div class="mono eyebrow" id="ex-course">elemental webar</div>
-    <h1 id="ex-title">Elemental WebAR</h1>
-    <p class="sub" id="ex-subtitle"></p>
-    <div class="how">
-      <b>how it works</b><br />
-      01 &nbsp;print your photograph &middot; the photo is the AR marker<br />
-      02 &nbsp;place the QR label beside the print<br />
-      03 &nbsp;visitor scans QR &rarr; points camera at the photo &rarr; the work opens<br />
-      no app &middot; no account &middot; just the open web
-    </div>
-
-    <div class="how" style="margin-top:1rem">
-      <b>experiments</b> &middot; one technique per page, from the studio's own works<br />
-      <span class="exlinks">
-      <a href="experiments/01-nfc-writer.html">01 nfc</a> &middot;
-      <a href="experiments/02-gps-fence.html">02 gps</a> &middot;
-      <a href="experiments/03-compass.html">03 compass</a> &middot;
-      <a href="experiments/04-sonify.html">04 sonify</a> &middot;
-      <a href="experiments/05-lenses.html">05 lenses</a> &middot;
-      <a href="experiments/06-lookup.html">06 lookup</a>
-      </span>
-    </div>
-
-    <div class="how" style="margin-top:1rem">
-      <b>other ways to build ar</b> &middot; WebAR, no-code, engines, tracking, hardware, compared<br />
-      <span class="exlinks"><a href="https://binyoun.github.io/ar-build-atlas/">ar build atlas &rarr;</a></span>
+  <header class="hero">
+    <div class="wrap">
+      <div>
+        <div class="label" id="ex-course">elemental webar</div>
+        <h1 id="ex-title">Elemental WebAR</h1>
+        <p class="sub" id="ex-subtitle"></p>
+        <div class="cta">
+          <a class="btn primary" href="#works">See the works &darr;</a>
+          <a class="btn ghost" href="https://github.com/binyoun/webar/blob/main/GUIDE.md">Add your own work</a>
+        </div>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <svg class="rings" viewBox="0 0 520 520" fill="none">
+          <defs><filter id="g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          <g class="spin"><circle cx="260" cy="260" r="250" stroke="#E8E8EC" stroke-opacity=".22" stroke-width="1.5" stroke-dasharray="3 12"/></g>
+          <circle class="breathe" cx="260" cy="260" r="205" stroke="#FF2D9B" stroke-width="3" filter="url(#g)"/>
+          <g class="spin-rev"><circle cx="260" cy="260" r="160" stroke="#4FFFDF" stroke-opacity=".6" stroke-width="2" stroke-dasharray="50 16"/><circle cx="260" cy="100" r="7" fill="#FF2D9B" filter="url(#g)"/><circle cx="398" cy="340" r="6" fill="#4FFFDF" filter="url(#g)"/></g>
+        </svg>
+        <div class="print"></div>
+        <div class="phone"><div class="view"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span class="beam"></span></div><span class="found">target found</span></div>
+      </div>
     </div>
   </header>
 
-  <main id="gallery"></main>
+  <section class="block">
+    <div class="wrap">
+      <div class="block-head">
+        <div><span class="label">How it works</span><h2>Three steps, no app.</h2></div>
+        <p>The printed photograph is the AR marker. Everything else runs in the visitor's phone browser.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M4 15l5-5 4 4 3-3 4 4"/><circle cx="15.5" cy="7.5" r="1.5"/></svg>
+          <h3>Print your photograph</h3><p>The image itself becomes the marker the camera looks for.</p><span class="n">01</span>
+        </div>
+        <div class="step">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>
+          <h3>Place the QR label</h3><p>Each work makes its own QR code to print beside the photograph.</p><span class="n">02</span>
+        </div>
+        <div class="step">
+          <svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M9 7h.01M15 7h.01M9 13h.01M15 13h.01"/><path d="M12 18h.01"/></svg>
+          <h3>Look, and it opens</h3><p>Scan the QR, point the camera at the print, and the work comes alive.</p><span class="n">03</span>
+        </div>
+      </div>
+      <p class="note-line">No app &middot; no account &middot; just the open web.</p>
+    </div>
+  </section>
+
+  <section class="block" id="works">
+    <div class="wrap">
+      <div class="block-head">
+        <div><span class="label">The works</span><h2>Open one in AR.</h2></div>
+        <p>On a phone, tap "open in ar". At a show, print the QR label and put it beside the photograph.</p>
+      </div>
+      <main id="gallery"></main>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="block-head">
+        <div><span class="label">Experiments</span><h2>One technique per page.</h2></div>
+        <p>Each comes from the studio's own works. Use them as starting points for your own.</p>
+      </div>
+      <div class="exp-grid">
+        <a class="exp" href="experiments/01-nfc-writer.html"><span class="num">01 &middot; NFC</span><h3>The photograph you tap</h3><p>Write a work's link to an NFC tag.</p><span class="from">from Sacred Tree</span></a>
+        <a class="exp" href="experiments/02-gps-fence.html"><span class="num">02 &middot; GPS</span><h3>Work that lives somewhere</h3><p>It only opens near the place it was made.</p><span class="from">from Gelora Mycelium Network</span></a>
+        <a class="exp" href="experiments/03-compass.html"><span class="num">03 &middot; Compass</span><h3>The body as a dial</h3><p>Turn to the right direction before it opens.</p><span class="from">from Gelora Compass</span></a>
+        <a class="exp" href="experiments/04-sonify.html"><span class="num">04 &middot; Sonify</span><h3>Text as a music box strip</h3><p>A caption becomes a melody.</p><span class="from">from Vanishing Waters</span></a>
+        <a class="exp" href="experiments/05-lenses.html"><span class="num">05 &middot; Lenses</span><h3>One image, many machines</h3><p>Tap to switch how the image is read.</p><span class="from">from Select Perception Engine</span></a>
+        <a class="exp" href="experiments/06-lookup.html"><span class="num">06 &middot; Lookup</span><h3>A date becomes a color</h3><p>Look up a lunar mansion from a date.</p><span class="from">from Sacred Tree</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div><h2>Other ways to build AR</h2><p>WebAR, no-code platforms, engines, tracking and hardware, compared in one map.</p></div>
+      <a class="btn" href="https://binyoun.github.io/ar-build-atlas/">AR Build Atlas &rarr;</a>
+    </div>
+  </section>
 
   <footer>
-    built on the open web &middot; a-frame + mindar &middot; add your work in config.json<br />
-    made by <a href="https://binyoun.com" style="color:inherit">bin youn</a> &middot; <a href="https://binyoun.github.io/ar-build-atlas/" style="color:inherit">ar build atlas</a>
+    <div class="wrap">
+      <span>Built on the open web &middot; A-Frame + MindAR &middot; add your work in config.json</span>
+      <span>Made by <a href="https://binyoun.com">Bin Youn</a> &middot; <a href="https://binyoun.github.io/ar-build-atlas/">AR Build Atlas</a></span>
+    </div>
   </footer>
 
   <script>
@@ -129,10 +275,19 @@
     async function load() {
       const config = await (await fetch("config.json")).json();
       const ex = config.exhibition || {};
-      if (ex.title) document.getElementById("ex-title").textContent = ex.title;
+      if (ex.title) {
+        const parts = ex.title.split(" ");
+        const last = parts.pop();
+        const title = document.getElementById("ex-title");
+        title.textContent = parts.length ? parts.join(" ") + " " : "";
+        const glow = document.createElement("span");
+        glow.className = "glow";
+        glow.textContent = last;
+        title.appendChild(glow);
+      }
       if (ex.subtitle) document.getElementById("ex-subtitle").textContent = ex.subtitle;
       if (ex.course) document.getElementById("ex-course").textContent =
-        `${ex.course}${ex.instructor ? " \u00b7 " + ex.instructor : ""}`;
+        `${ex.course}${ex.instructor ? " · " + ex.instructor : ""}`;
       document.title = ex.title || "Elemental WebAR";
 
       const gallery = document.getElementById("gallery");
@@ -149,7 +304,7 @@
           </div>
           <div class="body">
             <h2>${w.title}</h2>
-            <div class="meta">${w.artist} \u00b7 ${w.year}</div>
+            <div class="meta">${w.artist} · ${w.year}</div>
             <div class="badges">${badges(w)}</div>
             <div class="actions">
               <a class="open" href="ar.html?work=${encodeURIComponent(w.slug)}">open in ar</a>
